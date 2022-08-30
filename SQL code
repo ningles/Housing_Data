@@ -1,0 +1,29 @@
+--SQL code cleaning up Nashville Housing Data
+
+
+--Create table in PostgreSQL
+
+CREATE TABLE housing_data
+(unique_id int,
+parcel_id bigint,
+land_use VARCHAR (300),
+property_address VARCHAR (300),
+sale_date VARCHAR (300),
+sale_price int,
+legal_reference	bigint,
+sold_as_vacant VARCHAR (10),
+owner_name VARCHAR (400),
+owner_address VARCHAR (400),
+acreage numeric(4,2),
+tax_district VARCHAR (100),
+land_value bigint,
+building_value bigint,
+total_value	bigint,
+year_built int,
+bedrooms int,
+full_bath int,
+half_bath int)
+
+
+--Populate property address data
+
