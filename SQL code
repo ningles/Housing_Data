@@ -25,5 +25,54 @@ full_bath int,
 half_bath int)
 
 
---Populate property address data
+--Populate null property address data
+
+SELECT a.parcel_id, a.property_address, b.parcel_id, b.property_address, COALESCE (a.property_address,b.property_address)
+FROM housing_data a
+JOIN housing_data b
+ON a.parcel_id = b.parcel_id
+AND a.unique_id <> b.unique_id
+WHERE a.property_address is NULL
+
+--above query identifies null values & below query updates them to matching address
+
+UPDATE housing_data
+SET property_address = COALESCE (a.property_address,b.property_address)
+FROM housing_data a
+JOIN housing_data b
+ON a.parcel_id = b.parcel_id
+AND a.unique_id <> b.unique_id
+WHERE a.property_address is NULL
+
+
+--Breaking out Address into individual columns (address, city, state)
+
+SELECT split_part(owner_address,',',1),
+split_part(owner_address,',',2),
+split_part(owner_address,',',3)
+FROM housing_data
+
+ALTER TABLE housing_data
+ADD owner_split_address VARCHAR(250)
+ 
+UPDATE housing_data
+SET owner_split_address = split_part(owner_address,',',1)
+
+ALTER TABLE housing_data
+ADD owner_split_city VARCHAR(250)
+
+UPDATE housing_data
+SET owner_split_city = split_part(owner_address,',',2)
+
+
+ALTER TABLE housing_data
+ADD owner_split_state VARCHAR(250)
+
+UPDATE housing_data
+SET owner_split_state = split_part(owner_address,',',3)
+
+
+
+
+
 
