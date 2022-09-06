@@ -72,6 +72,52 @@ UPDATE housing_data
 SET owner_split_state = split_part(owner_address,',',3)
 
 
+-- Change Y and N to Yes and No in "sold_as_vacant" field
+
+SELECT DISTINCT(sold_as_vacant),COUNT(sold_as_vacant)
+FROM housing_data
+GROUP BY sold_as_vacant
+ORDER BY 2
+
+SELECT sold_as_vacant,
+CASE WHEN sold_as_vacant = 'Y' THEN 'Yes'
+WHEN sold_as_vacant = 'N' THEN 'No'
+ELSE sold_as_vacant
+END
+FROM housing_data
+
+UPDATE housing_data
+SET sold_as_vacant = CASE WHEN sold_as_vacant = 'Y' THEN 'Yes'
+WHEN sold_as_vacant = 'N' THEN 'No'
+ELSE sold_as_vacant
+END
+
+
+--Remove Duplicates 
+
+WITH RowNumCTE AS(
+SELECT *, ROW_NUMBER() OVER(
+PARTITION BY parcel_id,
+		property_address,
+		sale_price,
+		sale_date,
+		legal_reference
+		ORDER BY 
+		unique_id
+		) row_num
+FROM housing_data)
+DELETE
+FROM RowNumCTE
+WHERE row_num>1
+
+
+--Delete unused columns from table
+
+ALTER TABLE housing_data
+DROP COLUMN owner_address,
+DROP COLUMN tax_district,
+DROP COLUMN sale_date
+
 
 
 
